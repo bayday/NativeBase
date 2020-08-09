@@ -2,11 +2,9 @@ import React from 'react';
 import {
   Modal,
   View,
-  Platform,
-  DatePickerIOS,
-  DatePickerAndroid
+  Platform
 } from 'react-native';
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 import variable from '../theme/variables/platform';
 import { PLATFORM } from '../theme/variables/commonColor';
 
@@ -45,19 +43,19 @@ export class DatePicker extends React.Component {
 
   async openAndroidDatePicker() {
     try {
-      const newDate = await DatePickerAndroid.open({
-        date: this.state.chosenDate
+      const newDate = await DateTimePicker.open({
+        value: this.state.chosenDate
           ? this.state.chosenDate
           : this.state.defaultDate,
-        minDate: this.props.minimumDate,
-        maxDate: this.props.maximumDate,
+        minimumDate: this.props.minimumDate,
+        maximumDate: this.props.maximumDate,
         mode: this.props.androidMode
       });
       const { action, year, month, day } = newDate;
       if (action === 'dateSetAction') {
         const selectedDate = new Date(year, month, day);
         this.setState({ chosenDate: selectedDate });
-        this.props.onDateChange(selectedDate);
+        this.props.onChange(selectedDate);
       }
     } catch ({ code, message }) {
       console.warn('Cannot open date picker', message);
@@ -121,18 +119,20 @@ export class DatePicker extends React.Component {
                   flex: variables.datePickerFlex
                 }}
               />
-              <DatePickerIOS
-                date={
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={
                   this.state.chosenDate
                     ? this.state.chosenDate
                     : this.state.defaultDate
                 }
-                onDateChange={date => this.setDate(date)}
+                onChange={date => this.setDate(date)}
                 minimumDate={minimumDate}
                 maximumDate={maximumDate}
-                mode="date"
+                mode='date'
                 locale={locale}
                 timeZoneOffsetInMinutes={timeZoneOffsetInMinutes}
+                display="default"
               />
             </Modal>
           </View>
